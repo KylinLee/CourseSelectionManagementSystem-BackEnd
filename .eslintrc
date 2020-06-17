@@ -1,0 +1,26 @@
+{
+    "plugins": [
+        "prettier"
+    ],
+    "extends": [
+        "koa",
+        "plugin:prettier/recommended"
+    ],
+    "parserOptions": {
+        "ecmaVersion": 2017
+    },
+    "rules": {
+        "quotes": [
+            "warn",
+            "double"
+        ],
+        "semi": [
+            "warn",
+            "always"
+        ],
+        "indent": [
+            "warn",
+            4
+        ]
+    }
+}
