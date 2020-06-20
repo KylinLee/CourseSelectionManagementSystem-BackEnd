@@ -32,11 +32,13 @@ const typeDefs = gql`
         gradeCanChoose: String
         majorCanChoose: String
         teachers: [String]
+        maxStudents: String
+        ownerInstitute: String
     }
     type Mutation {
         selectCourse(courseId: String): String
         unSelectCourse(courseId: String): String
-        addCourse(course: course): couseInfo
+        addCourse(course: course): String
     }
 `;
 

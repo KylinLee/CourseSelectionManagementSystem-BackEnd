@@ -13,6 +13,12 @@ const resolvers = {
                 dataSources.db.context.uid,
                 _args.courseId
             );
+        },
+        async unSelectCourse(_source, _args, { dataSources }) {
+            return dataSources.db.unSelectCourse(
+                dataSources.db.context.uid,
+                _args.courseId
+            );
         }
     }
 };
