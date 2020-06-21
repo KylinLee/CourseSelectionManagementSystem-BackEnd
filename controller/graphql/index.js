@@ -21,15 +21,13 @@ const resolvers = {
             );
         },
         async addCourse(_source, _args, { dataSources }) {
-            const courseRes = await dataSources.db.addToCourse(
-                dataSources.db.context.course
-            );
+            const courseRes = await dataSources.db.addToCourse(_args.course);
             const {
                 courseId,
                 teachers,
                 gradeCanChoose,
                 majorCanChoose
-            } = dataSources.db.context.course;
+            } = _args.course;
             const teachRes = await dataSources.db.addToTeacherTeachCourse(
                 teachers,
                 courseId
@@ -42,6 +40,40 @@ const resolvers = {
                 majorCanChoose,
                 courseId
             );
+            return Promise.all([courseRes, teachRes, gradeRes, majorRes])
+                .then(() => {
+                    return courseId;
+                })
+                .catch(() => {
+                    return this.removeCourse(courseId);
+                });
+        },
+        async addTeacher(_source, _args, { dataSources }) {
+            return dataSources.db.addTeacher(_args.teacher);
+        },
+        async addStudent(_source, _args, { dataSources }) {
+            return dataSources.db.addStudent(_args.student);
+        },
+        async removeCourse(_source, _args, { dataSources }) {
+            const majorRes = await dataSources.db.removeFromChooseMajor(
+                _args.courseId
+            );
+            const teachRes = await dataSources.db.removeFromTeachCourse(
+                _args.courseId
+            );
+            const gradeRes = await dataSources.db.removeFromChooseGrade(
+                _args.courseId
+            );
+            const courseRes = await dataSources.db.removeFromCourse(
+                _args.courseId
+            );
+            return Promise.all([majorRes, teachRes, gradeRes, courseRes])
+                .then(() => {
+                    return _args.courseId;
+                })
+                .catch((e) => {
+                    return "0";
+                });
         }
     }
 };
