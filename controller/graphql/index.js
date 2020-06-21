@@ -19,6 +19,29 @@ const resolvers = {
                 dataSources.db.context.uid,
                 _args.courseId
             );
+        },
+        async addCourse(_source, _args, { dataSources }) {
+            const courseRes = await dataSources.db.addToCourse(
+                dataSources.db.context.course
+            );
+            const {
+                courseId,
+                teachers,
+                gradeCanChoose,
+                majorCanChoose
+            } = dataSources.db.context.course;
+            const teachRes = await dataSources.db.addToTeacherTeachCourse(
+                teachers,
+                courseId
+            );
+            const gradeRes = await dataSources.db.addToChooseGrade(
+                gradeCanChoose,
+                courseId
+            );
+            const majorRes = await dataSources.db.addToChooseMajor(
+                majorCanChoose,
+                courseId
+            );
         }
     }
 };

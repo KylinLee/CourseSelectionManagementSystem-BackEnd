@@ -49,7 +49,7 @@ class MyDatabase extends SQLDataSource {
             });
     }
 
-    addCourse(course) {
+    addToCourse(course) {
         return this.knex("course")
             .insert({
                 course_id: course.courseId,
@@ -62,6 +62,32 @@ class MyDatabase extends SQLDataSource {
                 max_students: course.maxStudents
             })
             .then();
+    }
+
+    addToTeacherTeachCourse(teachers, courseId) {
+        const relation = [];
+        for (const teacher of teachers) {
+            relation.push({
+                course_course_id: courseId,
+                teacher_uid: teacher
+            });
+        }
+        return this.knex("teacher_teach_course").insert(relation);
+    }
+
+    addToChooseGrade(grades, courseId) {
+        const relation = [];
+        for (const grade of grades) {
+            relation.push({ grade: grade, course: courseId });
+        }
+        return this.knex("grade_can_course_choose").insert(relation);
+    }
+
+    addToChooseMajor(majors, courseId) {
+        const relation = [];
+        for (const major of majors) {
+            relation.push({ major: major, course: courseId });
+        }
     }
 }
 

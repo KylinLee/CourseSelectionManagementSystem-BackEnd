@@ -29,10 +29,10 @@ const typeDefs = gql`
         time: String
         location: String
         require: Int
-        gradeCanChoose: String
-        majorCanChoose: String
+        gradeCanChoose: [Int]
+        majorCanChoose: [String]
         teachers: [String]
-        maxStudents: String
+        maxStudents: Int
         ownerInstitute: String
     }
     type Mutation {
