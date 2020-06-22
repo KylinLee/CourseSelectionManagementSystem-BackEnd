@@ -17,10 +17,38 @@ class MyDatabase extends SQLDataSource {
     }
 
     getTeachers() {
-        return this.knex
+        return this.knex("teacher")
             .select("uid", "name", "institute")
-            .from("teacher")
             .cache(MINUTE);
+    }
+
+    getCourses() {
+        return this.knex("course")
+            .select("*")
+            .then((courses) => {
+                // const res = [];
+                const res = courses.map((course) => {
+                    const {
+                        course_id: courseId,
+                        course_name: courseName,
+                        time,
+                        location,
+                        required: require,
+                        owner_institute: ownerInstitute,
+                        max_students: maxStudents
+                    } = course;
+                    return {
+                        courseId,
+                        courseName,
+                        time,
+                        location,
+                        require,
+                        ownerInstitute,
+                        maxStudents
+                    };
+                });
+                return res;
+            });
     }
 
     selectCourse(uid, courseId) {
@@ -108,6 +136,7 @@ class MyDatabase extends SQLDataSource {
             .del();
     }
 
+    /* 将课程和可选专业关联 */
     addToChooseMajor(majors, courseId) {
         const relation = [];
         for (const major of majors) {
@@ -120,12 +149,14 @@ class MyDatabase extends SQLDataSource {
             });
     }
 
+    /* 将课程从可选专业移除 */
     removeFromChooseMajor(courseId) {
         return this.knex("major_can_course_choose")
             .where("course", courseId)
             .del();
     }
 
+    /* 添加教师 */
     addTeacher(teacher) {
         return this.knex("teacher")
             .insert(teacher)
@@ -137,15 +168,113 @@ class MyDatabase extends SQLDataSource {
             });
     }
 
+    /* 添加学生 */
     addStudent(student) {
         return this.knex("student")
             .insert(student)
             .then(() => {
                 return student.uid;
             })
-            .catch((e) => {
-                console.log(e);
+            .catch(() => {
                 return "0";
+            });
+    }
+
+    /* 列出课程所有教师 */
+    listTeacher(courseId) {
+        return this.knex("courseid_teacher_name")
+            .select("name")
+            .where("course_course_id", courseId)
+            .then((teachers) => {
+                return teachers.map((teacher) => {
+                    return teacher.name;
+                });
+            });
+    }
+
+    /* 列出课程可选年级 */
+    listGrade(courseId) {
+        return this.knex("grade_can_course_choose")
+            .select("grade")
+            .where("course", courseId)
+            .then((grades) => {
+                return grades.map((grade) => {
+                    return grade.grade;
+                });
+            });
+    }
+
+    /* 列出课程可选专业 */
+    listMajor(courseId) {
+        return this.knex("courseid_major_name")
+            .select("major")
+            .where("course", courseId)
+            .then((majors) => {
+                return majors.map((major) => {
+                    return major.major;
+                });
+            });
+    }
+
+    /* 学生：获取个人课程及成绩 */
+    getPersonalCourse(studentId) {
+        return this.knex("student_choose_course")
+            .select("*")
+            .join(
+                "course",
+                "student_choose_course.course_course_id",
+                "course.course_id"
+            )
+            .where("student_uid", studentId)
+            .then((courses) => {
+                const res = courses.map((course) => {
+                    const {
+                        course_id: courseId,
+                        course_name: courseName,
+                        time,
+                        location,
+                        required: require,
+                        normal_grades: normalGrades,
+                        final_grades: finalGrades
+                    } = course;
+                    return {
+                        courseId,
+                        courseName,
+                        time,
+                        location,
+                        require,
+                        normalGrades,
+                        finalGrades
+                    };
+                });
+                return res;
+            });
+    }
+
+    /* 教师：获取某课程学生成绩 */
+    getStudentsGrades() {
+        return this.knex("courseid_student_info")
+            .select("*")
+            .then((infos) => {
+                const res = infos.map((info) => {
+                    const {
+                        uid: studentId,
+                        name,
+                        institute,
+                        major,
+                        final_grades: finalGrades,
+                        normal_grades: normalGrades
+                    } = info;
+                    return {
+                        studentId,
+                        name,
+                        institute,
+                        major,
+                        finalGrades,
+                        normalGrades
+                    };
+                });
+                return res;
             });
     }
 }

@@ -2,35 +2,51 @@
 const { gql } = require("apollo-server-koa");
 
 const typeDefs = gql`
-    type user {
+    type User {
         uid: String
         name: String
         grade: Int
         institute: String
         major: String
     }
-    type courseInfo {
+    type CourseInfo {
         courseId: String
         courseName: String
         time: String
         location: String
         require: Int
-        teachers: [user]
-        gradeCanChoose: String
-        majorCanChoose: String
+        teachers: [String]
+        gradeCanChoose: [Int]
+        majorCanChoose: [String]
+        maxStudents: Int
+        ownerInstitute: String
     }
-    type personalCourse {
-        course: courseInfo
+    type PersonalCourse {
+        courseId: String
+        courseName: String
+        time: String
+        location: String
+        require: Int
+        teachers: [String]
+        normalGrades: Int
+        finalGrades: Int
+    }
+    type StudentGrades {
+        name: String
+        studentId: String
+        institute: String
+        major: String
         normalGrades: Int
         finalGrades: Int
     }
     type Query {
-        students: [user]
-        teachers: [user]
-        courses: [courseInfo]
-        personalCourses(studetnId: String): [personalCourse]
+        students: [User]
+        teachers: [User]
+        courses: [CourseInfo]
+        personalCourses: [PersonalCourse]
+        teachersStudent: [StudentGrades]
     }
-    input course {
+    input Course {
         courseId: String
         courseName: String
         time: String
@@ -42,13 +58,13 @@ const typeDefs = gql`
         maxStudents: Int
         ownerInstitute: String
     }
-    input teacher {
+    input Teacher {
         uid: String
         name: String
         institute: String
         password: String
     }
-    input student {
+    input Student {
         uid: String
         name: String
         password: String
@@ -59,9 +75,9 @@ const typeDefs = gql`
     type Mutation {
         selectCourse(courseId: String): String
         unSelectCourse(courseId: String): String
-        addCourse(course: course): String
-        addTeacher(teacher: teacher): String
-        addStudent(student: student): String
+        addCourse(course: Course): String
+        addTeacher(teacher: Teacher): String
+        addStudent(student: Student): String
         removeCourse(courseId: String): String
     }
 `;

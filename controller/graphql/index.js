@@ -1,10 +1,35 @@
 const resolvers = {
+    CourseInfo: {
+        async teachers(_source, _args, { dataSources }) {
+            return dataSources.db.listTeacher(_source.courseId);
+        },
+        async gradeCanChoose(_source, _args, { dataSources }) {
+            return dataSources.db.listGrade(_source.courseId);
+        },
+        async majorCanChoose(_source, _args, { dataSources }) {
+            return dataSources.db.listMajor(_source.courseId);
+        }
+    },
+    PersonalCourse: {
+        async teachers(_source, _args, { dataSources }) {
+            return dataSources.db.listTeacher(_source.courseId);
+        }
+    },
     Query: {
         async students(_source, _args, { dataSources }) {
             return dataSources.db.getStudents();
         },
         async teachers(_source, _args, { dataSources }) {
             return dataSources.db.getTeachers();
+        },
+        async courses(_source, _args, { dataSources }) {
+            return dataSources.db.getCourses();
+        },
+        async personalCourses(_source, _args, { dataSources }) {
+            return dataSources.db.getPersonalCourse(dataSources.db.context.uid);
+        },
+        async teachersStudent(_source, _args, { dataSources }) {
+            return dataSources.db.getStudentsGrades();
         }
     },
     Mutation: {
@@ -40,13 +65,18 @@ const resolvers = {
                 majorCanChoose,
                 courseId
             );
-            return Promise.all([courseRes, teachRes, gradeRes, majorRes])
-                .then(() => {
-                    return courseId;
-                })
-                .catch(() => {
-                    return this.removeCourse(courseId);
-                });
+            if (majorRes && gradeRes && teachRes && courseRes) {
+                return courseId;
+            }
+            return this.removeCourse(courseId);
+            // 不能使用Promise.all
+            // return Promise.all([courseRes, teachRes, gradeRes, majorRes])
+            //     .then(() => {
+            //         return courseId;
+            //     })
+            //     .catch(() => {
+            //         return this.removeCourse(courseId);
+            //     });
         },
         async addTeacher(_source, _args, { dataSources }) {
             return dataSources.db.addTeacher(_args.teacher);
@@ -67,13 +97,18 @@ const resolvers = {
             const courseRes = await dataSources.db.removeFromCourse(
                 _args.courseId
             );
-            return Promise.all([majorRes, teachRes, gradeRes, courseRes])
-                .then(() => {
-                    return _args.courseId;
-                })
-                .catch((e) => {
-                    return "0";
-                });
+            if (majorRes && gradeRes && teachRes && courseRes) {
+                return _args.courseId;
+            }
+            return "0";
+            // 不能使用Promise.all
+            // return Promise.all([courseRes, teachRes, gradeRes, majorRes])
+            //     .then(() => {
+            //         return courseId;
+            //     })
+            //     .catch(() => {
+            //         return this.removeCourse(courseId);
+            //     });
         }
     }
 };

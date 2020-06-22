@@ -49,7 +49,8 @@ const server = new ApolloServer({
             uid: "18052407",
             role: "student"
         };
-    }
+    },
+    tracing: true
 });
 
 server.applyMiddleware({ app });

@@ -165,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `course_choose_system`.`major_can_course_choose` (
   PRIMARY KEY (`id`),
   INDEX `major_course_index` (`course` ASC),
   INDEX `major_major_index` (`major` ASC),
+  UNIQUE KEY (`major`, `course`),
   CONSTRAINT `fk_major_major`
     FOREIGN KEY (`major`)
     REFERENCES `course_choose_system`.`major` (`id`)
@@ -188,6 +189,7 @@ CREATE TABLE IF NOT EXISTS `course_choose_system`.`grade_can_course_choose` (
   PRIMARY KEY (`id`),
   INDEX `course_grade_index` (`grade` ASC),
   INDEX `couse_course_index` (`course` ASC),
+  UNIQUE KEY (`grade`, `course`),
   CONSTRAINT `fk_course_grade`
     FOREIGN KEY (`grade`)
     REFERENCES `course_choose_system`.`grade` (`id`)
@@ -200,6 +202,32 @@ CREATE TABLE IF NOT EXISTS `course_choose_system`.`grade_can_course_choose` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+create view `courseid_teacher_name` as
+select `teacher_teach_course`.`course_course_id`, `teacher`.`name`
+from teacher_teach_course
+        inner join teacher
+                on teacher_teach_course.teacher_uid = teacher.uid;
+
+create view `courseid_major_name` as
+select `major`.`major`, `major`.`id`, `major_can_course_choose`.`course`
+from `major_can_course_choose`
+        inner join `major`
+                on major.id = major_can_course_choose.major
+
+create view courseid_student_info
+as
+select `student`.`uid`,
+       `student`.`name`,
+       `student`.`institute`,
+       `major`.`major`,
+       `student_choose_course`.`course_course_id`,
+       `student_choose_course`.`normal_grades`,
+       `student_choose_course`.`final_grades`
+from `student`
+         inner join `major`
+                    on `student`.`major` = `major`.`id`
+         inner join `student_choose_course`
+                    on `student`.`uid` = `student_choose_course`.`student_uid`
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
