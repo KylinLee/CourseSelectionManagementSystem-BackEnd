@@ -214,8 +214,7 @@ from `major_can_course_choose`
         inner join `major`
                 on major.id = major_can_course_choose.major
 
-create view courseid_student_info
-as
+create view `courseid_student_info` as
 select `student`.`uid`,
        `student`.`name`,
        `student`.`institute`,
