@@ -39,12 +39,22 @@ const typeDefs = gql`
         normalGrades: Int
         finalGrades: Int
     }
+    type Major{
+        id: Int,
+        major: String
+    }
+    type Grade {
+        id: Int
+        grade: Int
+    }
     type Query {
         students: [User]
         teachers: [User]
         courses: [CourseInfo]
         personalCourses: [PersonalCourse]
         teachersStudent: [StudentGrades]
+        majors: [Major]
+        grades: [Grade]
     }
     input Course {
         courseId: String

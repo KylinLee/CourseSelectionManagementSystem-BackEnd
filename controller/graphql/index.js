@@ -30,6 +30,12 @@ const resolvers = {
         },
         async teachersStudent(_source, _args, { dataSources }) {
             return dataSources.db.getStudentsGrades();
+        },
+        async majors(_source, _args, { dataSources }) {
+            return dataSources.db.getMajors();
+        },
+        async grades(_source, _args, { dataSources }) {
+            return dataSources.db.getGrades();
         }
     },
     Mutation: {

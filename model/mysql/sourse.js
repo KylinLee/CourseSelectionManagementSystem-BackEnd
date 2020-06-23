@@ -277,6 +277,15 @@ class MyDatabase extends SQLDataSource {
                 return res;
             });
     }
+
+    /* 获取专业及对应编号 */
+    getMajors() {
+        return this.knex("major").select("*");
+    }
+
+    getGrades() {
+        return this.knex("grade").select("*");
+    }
 }
 
 module.exports = MyDatabase;
