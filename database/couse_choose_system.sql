@@ -202,31 +202,31 @@ CREATE TABLE IF NOT EXISTS `course_choose_system`.`grade_can_course_choose` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-create view `courseid_teacher_name` as
-select `teacher_teach_course`.`course_course_id`, `teacher`.`name`
-from teacher_teach_course
-        inner join teacher
-                on teacher_teach_course.teacher_uid = teacher.uid;
+CREATE VIEW `courseid_teacher_name` AS
+SELECT `teacher_teach_course`.`course_course_id`, `teacher`.`name`
+FROM `teacher_teach_course`
+        INNER JOIN `teacher`
+                ON `teacher_teach_course`.`teacher_uid` = `teacher`.`uid`;
 
-create view `courseid_major_name` as
-select `major`.`major`, `major`.`id`, `major_can_course_choose`.`course`
-from `major_can_course_choose`
-        inner join `major`
-                on major.id = major_can_course_choose.major
+CREATE VIEW `courseid_major_name` AS
+SELECT `major`.`major`, `major`.`id`, `major_can_course_choose`.`course`
+FROM `major_can_course_choose`
+        INNER JOIN `major`
+                ON `major`.`id` = `major_can_course_choose`.`major`;
 
-create view `courseid_student_info` as
-select `student`.`uid`,
+CREATE VIEW `courseid_student_info` AS
+SELECT `student`.`uid`,
        `student`.`name`,
        `student`.`institute`,
        `major`.`major`,
        `student_choose_course`.`course_course_id`,
        `student_choose_course`.`normal_grades`,
        `student_choose_course`.`final_grades`
-from `student`
-         inner join `major`
-                    on `student`.`major` = `major`.`id`
-         inner join `student_choose_course`
-                    on `student`.`uid` = `student_choose_course`.`student_uid`
+FROM `student`
+         INNER JOIN `major`
+                    ON `student`.`major` = `major`.`id`
+         INNER JOIN `student_choose_course`
+                    ON `student`.`uid` = `student_choose_course`.`student_uid`;
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
